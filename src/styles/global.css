@@ -1,0 +1,849 @@
+:root {
+  /* Color tokens — derived from the dashboard reference */
+  --bg-0: #060c14;
+  --bg-1: #0a1320;
+  --bg-2: #0e1a2b;
+  --bg-3: #11233a;
+  --panel: #0c1827;
+  --panel-2: #0f1e31;
+  --border: #1b2c45;
+  --border-soft: #142338;
+
+  --text-0: #e6f1ff;
+  --text-1: #b8c9e0;
+  --text-2: #6b88ad;
+  --text-3: #43607f;
+
+  --accent: #00d4ff;
+  --accent-2: #2bf3c0;
+  --teal: #1ad6b0;
+  --cyan: #2ad4ff;
+  --blue: #4c8cff;
+
+  --pos: #14e39a;
+  --neg: #ff4d6d;
+  --warn: #ffb547;
+
+  --grid: #112137;
+
+  --radius: 6px;
+  --gap: 10px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter,
+    "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: var(--bg-0);
+  color: var(--text-1);
+  font-family: var(--font);
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2d48;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ── App shell ────────────────────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-rows: 36px 56px 1fr 24px;
+  height: 100vh;
+  background: var(--bg-0);
+}
+
+/* Browser-chrome bar at the very top of the reference image */
+.chrome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  background: #02060b;
+  border-bottom: 1px solid #0a1422;
+  color: var(--text-3);
+  font-size: 11px;
+}
+.chrome .dots {
+  display: flex;
+  gap: 6px;
+  margin-right: 10px;
+}
+.chrome .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #1a2738;
+}
+.chrome .url {
+  flex: 1;
+  background: #0a1422;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 10px;
+  color: var(--text-1);
+  font: inherit;
+  max-width: 360px;
+  outline: none;
+  transition: border-color 120ms ease;
+}
+.chrome .url::placeholder { color: var(--text-3); }
+.chrome .url:focus { border-color: var(--accent); }
+
+/* Top header w/ logo and live ticker */
+.header {
+  display: grid;
+  grid-template-columns: 240px 1fr auto;
+  align-items: center;
+  background: linear-gradient(180deg, #08111d 0%, #060d18 100%);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 0 16px;
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand .mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--blue) 100%);
+  display: grid;
+  place-items: center;
+  color: #001018;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 0 14px rgba(0, 212, 255, 0.35);
+}
+.brand .name {
+  color: var(--text-0);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+}
+.brand .sub {
+  color: var(--text-2);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  margin-left: 6px;
+}
+
+/* Live ticker strip — scrolls like the footer wire */
+.ticker {
+  position: relative;
+  overflow: hidden;
+  padding: 0 8px;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 24px,
+    #000 calc(100% - 24px),
+    transparent 100%
+  );
+}
+.ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  white-space: nowrap;
+  animation: scroll 90s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+.ticker .item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--mono);
+}
+.ticker .sym {
+  color: var(--text-2);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.ticker .px {
+  color: var(--text-0);
+  font-weight: 600;
+  font-size: 12px;
+}
+.ticker .chg.pos {
+  color: var(--pos);
+  font-size: 11px;
+}
+.ticker .chg.neg {
+  color: var(--neg);
+  font-size: 11px;
+}
+
+.live {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.live .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neg);
+  box-shadow: 0 0 8px var(--neg);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,
+  100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.live .label {
+  color: var(--text-0);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+.live .time {
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+.toggle span {
+  padding: 4px 8px;
+  color: var(--text-2);
+  background: transparent;
+  transition: background 120ms ease, color 120ms ease;
+}
+.toggle span.on {
+  color: #001018;
+  background: var(--accent);
+}
+.live .market {
+  background: var(--neg);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+/* ── Dashboard grid ──────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--gap);
+  padding: var(--gap);
+  min-height: 0;
+  overflow-y: auto;
+  /* When user drags the chart taller this fills first, then the page scrolls */
+}
+
+.col-left {
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: var(--gap);
+  min-height: 0;
+}
+.col-center {
+  display: grid;
+  grid-row: 1 / span 2;
+  grid-template-rows: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: var(--gap);
+  min-height: 0;
+}
+.center-bottom {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--gap);
+  min-height: 0;
+}
+.center-bottom-left {
+  display: grid;
+  grid-template-rows: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: var(--gap);
+  min-height: 0;
+}
+.col-right {
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-rows: 1.35fr 1fr;
+  gap: var(--gap);
+  min-height: 0;
+}
+
+/* ── Panel ───────────────────────────────────────────────── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.panel-title {
+  color: var(--text-0);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.panel-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.chip {
+  background: rgba(0, 212, 255, 0.08);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.chip.muted {
+  background: #112237;
+  color: var(--text-2);
+}
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 10px;
+}
+.panel-body.flush {
+  padding: 0;
+}
+
+/* Top KPI row above the chart */
+.center-top {
+  display: grid;
+  grid-template-rows: 1fr;
+  gap: var(--gap);
+  min-height: 0;
+}
+
+/* ── Watchlist ───────────────────────────────────────────── */
+.watchlist {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+}
+.watchlist th {
+  text-align: right;
+  font-weight: 500;
+  color: var(--text-3);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border-soft);
+  text-transform: uppercase;
+}
+.watchlist th:first-child {
+  text-align: left;
+}
+.watchlist td {
+  padding: 5px 6px;
+  text-align: right;
+  font-size: 11px;
+  border-bottom: 1px solid #0d182a;
+}
+.watchlist td:first-child {
+  text-align: left;
+  color: var(--text-0);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.watchlist tr:hover td {
+  background: rgba(0, 212, 255, 0.03);
+}
+.pos { color: var(--pos); }
+.neg { color: var(--neg); }
+.muted { color: var(--text-2); }
+
+/* ── KPI tiles ──────────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border-soft);
+  height: 100%;
+}
+.kpi {
+  background: var(--panel);
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+}
+.kpi .label {
+  color: var(--text-2);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.kpi .value {
+  color: var(--text-0);
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--mono);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.kpi .sub {
+  color: var(--text-2);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.kpi .delta.pos { color: var(--pos); }
+.kpi .delta.neg { color: var(--neg); }
+
+/* KPI group switcher — sits in the Key Metrics panel header */
+.kpi-tabs {
+  display: inline-flex;
+  background: #0a1626;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 2px;
+  gap: 1px;
+}
+.kpi-tab {
+  padding: 3px 8px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+  border-radius: 3px;
+  text-transform: uppercase;
+  transition: background 120ms ease, color 120ms ease;
+}
+.kpi-tab:hover { color: var(--text-0); }
+.kpi-tab.on {
+  color: #001018;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.25);
+}
+
+/* ── News list ──────────────────────────────────────────── */
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.news-item {
+  border-left: 3px solid var(--neg);
+  background: var(--panel-2);
+  padding: 10px 12px;
+  border-radius: 0 4px 4px 0;
+}
+.news-item.warn { border-color: var(--warn); }
+.news-item.info { border-color: var(--accent); }
+.news-item .tag {
+  display: inline-block;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  background: var(--neg);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 2px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.news-item.warn .tag { background: var(--warn); color: #1a1000; }
+.news-item.info .tag { background: var(--accent); color: #001018; }
+.news-item h4 {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--text-0);
+  font-weight: 600;
+}
+.news-item p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* ── Movers cards ───────────────────────────────────────── */
+.movers-tabs {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 10px;
+  color: var(--text-2);
+}
+.movers-tabs .tab {
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+.movers-tabs .tab.active {
+  background: rgba(0, 212, 255, 0.12);
+  color: var(--accent);
+}
+.movers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 10px;
+}
+.mover {
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mover .head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.mover .sym {
+  color: var(--text-0);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+.mover .pct {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 16px;
+}
+.mover .pct.pos { color: var(--pos); }
+.mover .pct.neg { color: var(--neg); }
+.mover .name {
+  color: var(--text-2);
+  font-size: 10px;
+}
+.mover .spark {
+  height: 36px;
+  margin-top: 2px;
+}
+
+/* ── Footer ticker ──────────────────────────────────────── */
+.footer {
+  background: #02060b;
+  border-top: 1px solid #0a1422;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 0 12px;
+  color: var(--text-2);
+  font-size: 11px;
+  gap: 24px;
+}
+.footer .badge {
+  background: var(--accent);
+  color: #001018;
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.scroll-track {
+  display: flex;
+  gap: 28px;
+  white-space: nowrap;
+  animation: scroll 60s linear infinite;
+}
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── Allocation row ─────────────────────────────────────── */
+.alloc-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+  min-height: 0;
+}
+
+/* Asset allocation panel inner layout */
+.alloc-inner {
+  display: grid;
+  grid-template-columns: 0.95fr 1fr;
+  gap: 8px;
+  height: 100%;
+  align-items: center;
+}
+.alloc-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.alloc-legend .row {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.alloc-legend .sw {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.alloc-legend .name {
+  color: var(--text-1);
+}
+.alloc-legend .pct {
+  color: var(--text-0);
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+/* highcharts container fills body */
+.chart-fill {
+  width: 100%;
+  height: 100%;
+}
+
+/* Custom range tabs (LIVE/1H/4H/ALL) used by the candle chart panel */
+.range-tabs {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.range-tab {
+  padding: 3px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-2);
+  background: transparent;
+  border-right: 1px solid var(--border);
+  transition: background 120ms ease, color 120ms ease;
+}
+.range-tab:last-child { border-right: 0; }
+.range-tab:hover { color: var(--text-0); background: rgba(0, 212, 255, 0.05); }
+.range-tab.on { color: #001018; background: var(--accent); }
+
+/* Dark Highcharts Stock range selector overrides */
+.highcharts-range-selector-buttons text {
+  letter-spacing: 0.08em;
+}
+.highcharts-range-selector-buttons .highcharts-button-symbol {
+  display: none;
+}
+
+/* ── Highcharts Grid Lite — terminal theme via tokens ───── */
+.hx-grid {
+  height: 100%;
+  width: 100%;
+
+  /* Containers */
+  --hcg-background: transparent;
+  --hcg-border-color: transparent;
+  --hcg-border-width: 0;
+
+  /* Header */
+  --hcg-header-background: transparent;
+  --hcg-header-color: var(--text-3);
+  --hcg-header-font-size: 10px;
+  --hcg-header-font-weight: 500;
+  --hcg-header-font-family: var(--font);
+  --hcg-header-padding: 4px 6px;
+  --hcg-header-border-color: var(--border-soft);
+  --hcg-header-border-width: 0 0 1px 0;
+  --hcg-header-border-style: solid;
+  --hcg-header-text-align: right;
+
+  /* Cells — match the dense look of the original HTML tables */
+  --hcg-cell-background: transparent;
+  --hcg-cell-color: var(--text-1);
+  --hcg-cell-font-family: var(--mono);
+  --hcg-cell-font-size: 11px;
+  --hcg-cell-text-align: right;
+
+  /* Drives both cell + header padding (no per-area override exists) */
+  --hcg-vertical-padding: 4px;
+  --hcg-horizontal-padding: 8px;
+
+  /* Row hover */
+  --hcg-cell-hover-background: rgba(0, 212, 255, 0.04);
+  --hcg-cell-hovered-row-background: rgba(0, 212, 255, 0.04);
+  --hcg-cell-hovered-background: rgba(0, 212, 255, 0.06);
+  --hcg-cell-hover-color: var(--text-0);
+  --hcg-cell-hovered-color: var(--text-0);
+
+  /* Row borders */
+  --hcg-row-border-color: #0d182a;
+}
+
+/* First column = symbol, left-aligned brand color */
+.hx-grid td.g-sym {
+  text-align: left !important;
+  color: var(--text-0) !important;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.hx-grid thead th:first-child .hcg-header-cell-content,
+.hx-grid thead th:first-child {
+  text-align: left;
+}
+
+/* Inline coloring spans returned from formatters */
+.hx-grid td .pos { color: var(--pos); }
+.hx-grid td .neg { color: var(--neg); }
+.hx-grid td .muted { color: var(--text-2); }
+
+/* Hide the Highcharts credit watermark inside grids */
+.hx-grid .hcg-credits,
+.hx-grid a[href*="highcharts.com"] {
+  display: none !important;
+}
+
+/* Tighten line-height + alignments inside cells */
+.hx-grid .hcg-table tbody td,
+.hx-grid .hcg-table thead th {
+  line-height: 1.2;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.hx-grid .hcg-row:hover .hcg-cell {
+  background: rgba(0, 212, 255, 0.04);
+}
+
+/* ─────────────────────────────────────────────────────────
+   13" laptop overrides (MacBook Air/Pro 13", ~1280–1440px)
+   Same layout structure — just tighter spacing + smaller type
+   so everything stays visible without horizontal scroll.
+   ───────────────────────────────────────────────────────── */
+@media (max-width: 1440px) {
+  :root {
+    --gap: 8px;
+  }
+
+  html, body { font-size: 11px; }
+
+  /* App shell — slightly slimmer chrome + header */
+  .app { grid-template-rows: 30px 48px 1fr 22px; }
+
+  .chrome { font-size: 10px; }
+  .chrome .url { max-width: 260px; padding: 3px 8px; }
+
+  .header { grid-template-columns: 180px 1fr auto; padding: 0 12px; gap: 12px; }
+  .brand .mark { width: 22px; height: 22px; font-size: 12px; }
+  .brand .name { font-size: 11px; }
+  .brand .sub { font-size: 9px; }
+
+  .ticker-track { gap: 16px; }
+  .ticker .sym { font-size: 9px; }
+  .ticker .px { font-size: 11px; }
+  .ticker .chg.pos, .ticker .chg.neg { font-size: 10px; }
+
+  .live { gap: 8px; }
+  .live .label, .live .time { font-size: 10px; }
+  .live .market { padding: 5px 9px; font-size: 10px; }
+  .toggle span { padding: 3px 6px; font-size: 9px; }
+
+  /* Dashboard grid — narrower side columns */
+  .grid {
+    grid-template-columns: 230px 1fr 270px;
+    padding: var(--gap);
+  }
+
+  /* Panels */
+  .panel-head { padding: 6px 10px; }
+  .panel-title { font-size: 10px; letter-spacing: 0.14em; }
+  .chip { padding: 1px 6px; font-size: 9px; }
+  .panel-body { padding: 6px 8px; }
+
+  /* Watchlist / Holdings (HTML mode) */
+  .watchlist th { padding: 3px 4px; font-size: 9px; }
+  .watchlist td { padding: 3px 4px; font-size: 10px; }
+
+  /* Highcharts Grid mode — tighten further */
+  .hx-grid {
+    --hcg-vertical-padding: 3px;
+    --hcg-horizontal-padding: 6px;
+    --hcg-cell-font-size: 10px;
+    --hcg-header-font-size: 9px;
+  }
+
+  /* KPI tiles */
+  .kpi { padding: 10px 10px 8px; }
+  .kpi .label { font-size: 9px; }
+  .kpi .value { font-size: 22px; }
+  .kpi .sub { font-size: 9px; }
+
+  /* News cards */
+  .news-item { padding: 8px 10px; }
+  .news-item h4 { font-size: 11px; }
+  .news-item p { font-size: 10px; line-height: 1.4; }
+  .news-item .tag { font-size: 8px; }
+
+  /* Top movers cards */
+  .movers { gap: 6px; padding: 8px; }
+  .mover { padding: 8px; }
+  .mover .sym { font-size: 11px; }
+  .mover .pct { font-size: 14px; }
+  .mover .name { font-size: 9px; }
+  .mover .spark { height: 30px; }
+
+  /* Range / chart toggle tabs */
+  .range-tab { padding: 2px 7px; font-size: 9px; }
+
+  /* Footer wire */
+  .footer { padding: 0 10px; gap: 18px; font-size: 10px; }
+  .footer .badge { font-size: 9px; }
+}
+
+/* Even tighter for very small 13" displays (1280×800) */
+@media (max-width: 1280px) {
+  .grid { grid-template-columns: 210px 1fr 250px; }
+  .header { grid-template-columns: 160px 1fr auto; }
+  .kpi .value { font-size: 19px; }
+}
