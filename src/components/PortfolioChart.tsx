@@ -211,8 +211,7 @@ export const PortfolioChart = () => {
     const chart = chartRef.current?.chart;
     if (!chart) return;
     const xAxis = chart.xAxis[0];
-    const dataMax = xAxis.dataMax!;
-    const dataMin = xAxis.dataMin!;
+    const { dataMax, dataMin } = xAxis.getExtremes();
     let from = dataMin;
     const HOUR = 3_600_000; // real-time hour in ms
     if (m === 'live') from = dataMax - LIVE_WINDOW_BARS * BAR_INTERVAL_MS;
@@ -271,7 +270,7 @@ export const PortfolioChart = () => {
       // In LIVE mode, re-anchor visible window to the newest bar
       if (modeRef.current === 'live') {
         const xAxis = chart.xAxis[0];
-        const dataMax = xAxis.dataMax!;
+        const { dataMax } = xAxis.getExtremes();
         xAxis.setExtremes(
           dataMax - LIVE_WINDOW_BARS * BAR_INTERVAL_MS,
           dataMax,
