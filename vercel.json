@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/yahoo/:path*", "destination": "/api/yahoo/:path*" }
+    { "source": "/yahoo/:path*", "destination": "/api/yahoo?path=:path*" }
   ]
 }
