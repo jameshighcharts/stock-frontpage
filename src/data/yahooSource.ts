@@ -140,8 +140,9 @@ export class YahooSource implements DataSource {
       tickers,
       watchlist,
       holdings,
-      volatility,
-      movers,
+      // Empty when every Yahoo fetch failed — keep the panels populated
+      volatility: volatility.length ? volatility : baseline.volatility,
+      movers: movers.length ? movers : baseline.movers,
       correlation,
     };
   }
